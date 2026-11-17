@@ -1,0 +1,14 @@
+# Image de base légère
+FROM alpine:latest
+
+# Installation de Nginx + page HTML + vhost qui sert la page
+# (le default.conf d'Alpine renvoie 404 sur "/" par défaut, on le remplace)
+RUN apk add --no-cache nginx \
+ && mkdir -p /run/nginx /var/www/app \
+ && echo "<h1>Application Deployed via Terraform IaC!</h1>" > /var/www/app/index.html \
+ && printf 'server {\n    listen 80 default_server;\n    listen [::]:80 default_server;\n    root /var/www/app;\n    index index.html;\n    location / {\n        try_files $uri $uri/ =404;\n    }\n}\n' > /etc/nginx/http.d/default.conf
+
+EXPOSE 80
+
+# Nginx au premier plan pour que le conteneur reste vivant
+CMD ["nginx", "-g", "daemon off;"]

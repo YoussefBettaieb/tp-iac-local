@@ -1,0 +1,176 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.app_container will be created
+  + resource "docker_container" "app_container" {
+      + attach                                      = false
+      + bridge                                      = (known after apply)
+      + command                                     = (known after apply)
+      + container_logs                              = (known after apply)
+      + container_read_refresh_timeout_milliseconds = 15000
+      + entrypoint                                  = (known after apply)
+      + env                                         = (known after apply)
+      + exit_code                                   = (known after apply)
+      + hostname                                    = (known after apply)
+      + id                                          = (known after apply)
+      + image                                       = (known after apply)
+      + init                                        = (known after apply)
+      + ipc_mode                                    = (known after apply)
+      + log_driver                                  = (known after apply)
+      + logs                                        = false
+      + memory_reservation                          = 0
+      + must_run                                    = true
+      + name                                        = "tp-app-web"
+      + network_data                                = (known after apply)
+      + network_mode                                = "bridge"
+      + read_only                                   = false
+      + remove_volumes                              = true
+      + restart                                     = "no"
+      + rm                                          = false
+      + runtime                                     = (known after apply)
+      + security_opts                               = (known after apply)
+      + shm_size                                    = (known after apply)
+      + start                                       = true
+      + stdin_open                                  = false
+      + stop_signal                                 = (known after apply)
+      + stop_timeout                                = (known after apply)
+      + tty                                         = false
+      + wait                                        = false
+      + wait_timeout                                = 60
+
+      + healthcheck (known after apply)
+
+      + labels (known after apply)
+
+      + ports {
+          + external = 8080
+          + internal = 80
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_container.db_container will be created
+  + resource "docker_container" "db_container" {
+      + attach                                      = false
+      + bridge                                      = (known after apply)
+      + command                                     = (known after apply)
+      + container_logs                              = (known after apply)
+      + container_read_refresh_timeout_milliseconds = 15000
+      + entrypoint                                  = (known after apply)
+      + env                                         = (sensitive value)
+      + exit_code                                   = (known after apply)
+      + hostname                                    = (known after apply)
+      + id                                          = (known after apply)
+      + image                                       = (known after apply)
+      + init                                        = (known after apply)
+      + ipc_mode                                    = (known after apply)
+      + log_driver                                  = (known after apply)
+      + logs                                        = false
+      + memory_reservation                          = 0
+      + must_run                                    = true
+      + name                                        = "tp-db-postgres"
+      + network_data                                = (known after apply)
+      + network_mode                                = "bridge"
+      + read_only                                   = false
+      + remove_volumes                              = true
+      + restart                                     = "no"
+      + rm                                          = false
+      + runtime                                     = (known after apply)
+      + security_opts                               = (known after apply)
+      + shm_size                                    = (known after apply)
+      + start                                       = true
+      + stdin_open                                  = false
+      + stop_signal                                 = (known after apply)
+      + stop_timeout                                = (known after apply)
+      + tty                                         = false
+      + wait                                        = false
+      + wait_timeout                                = 60
+
+      + healthcheck (known after apply)
+
+      + labels (known after apply)
+
+      + ports {
+          + external = 5432
+          + internal = 5432
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.app_image will be created
+  + resource "docker_image" "app_image" {
+      + id          = (known after apply)
+      + image_id    = (known after apply)
+      + name        = "tp-web-app:latest"
+      + repo_digest = (known after apply)
+      + triggers    = {
+          + "dockerfile_sha" = "040ab4b6500ca543d0b49c585bb6ac3b45dff5ac"
+        }
+
+      + build {
+          + additional_contexts = []
+          + cache_from          = []
+          + cache_to            = []
+          + context             = "."
+          + dockerfile          = "Dockerfile_app"
+          + extra_hosts         = []
+          + remove              = true
+          + security_opt        = []
+          + tag                 = []
+            # (13 unchanged attributes hidden)
+        }
+    }
+
+  # docker_image.postgres_image will be created
+  + resource "docker_image" "postgres_image" {
+      + id           = (known after apply)
+      + image_id     = (known after apply)
+      + keep_locally = true
+      + name         = "postgres:latest"
+      + repo_digest  = (known after apply)
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + app_access_url     = "http://localhost:8080"
+  + app_container_name = "tp-app-web"
+  + db_connection      = "localhost:5432"
+  + db_container_name  = "tp-db-postgres"
+docker_image.postgres_image: Creating...
+docker_image.app_image: Creating...
+docker_image.app_image: Still creating... [00m10s elapsed]
+docker_image.postgres_image: Still creating... [00m10s elapsed]
+docker_image.postgres_image: Still creating... [00m20s elapsed]
+docker_image.app_image: Still creating... [00m20s elapsed]
+docker_image.app_image: Still creating... [00m30s elapsed]
+docker_image.postgres_image: Still creating... [00m30s elapsed]
+docker_image.postgres_image: Still creating... [00m40s elapsed]
+docker_image.app_image: Still creating... [00m40s elapsed]
+docker_image.app_image: Still creating... [00m50s elapsed]
+docker_image.postgres_image: Still creating... [00m50s elapsed]
+docker_image.app_image: Creation complete after 57s [id=sha256:d814a2f709bd598d8a41c93c882fd96fdd22e7171e17bc93bcf305ffd66b5fb4tp-web-app:latest]
+docker_image.postgres_image: Still creating... [01m00s elapsed]
+docker_image.postgres_image: Still creating... [01m10s elapsed]
+docker_image.postgres_image: Still creating... [01m20s elapsed]
+docker_image.postgres_image: Still creating... [01m30s elapsed]
+docker_image.postgres_image: Creation complete after 1m32s [id=sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbcpostgres:latest]
+docker_container.db_container: Creating...
+docker_container.db_container: Creation complete after 2s [id=1c780f3db0f37a45353e41cdc13cfbe71dcb6413a6b0bbfb6d2a54327e2b3f4c]
+docker_container.app_container: Creating...
+docker_container.app_container: Creation complete after 2s [id=0e8b1c3cc75069f804b99e60f4898e262595c24a6eb7501bc5087a80df7ef543]
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+app_access_url = "http://localhost:8080"
+app_container_name = "tp-app-web"
+db_connection = "localhost:5432"
+db_container_name = "tp-db-postgres"

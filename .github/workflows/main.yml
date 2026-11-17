@@ -1,0 +1,75 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permet aussi un lancement manuel depuis l'onglet Actions
+
+jobs:
+  # ---------- Étape 1 : Setup + Init + Plan ----------
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Format & Validate
+        run: |
+          terraform fmt -check -recursive
+          terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Sauvegarde du plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+  # ---------- Étape 2 : Apply (seulement si Plan a réussi) ----------
+  apply:
+    name: Apply
+    needs: plan # <- gate : Apply ne démarre que si le job Plan est vert
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Récupération du plan validé
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve tfplan
+
+      - name: Vérification du déploiement
+        run: |
+          sleep 5
+          docker ps --filter name=tp- --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+          echo "--- Application web ---"
+          curl -sf http://localhost:8080/
+          echo
+          echo "--- Base de données ---"
+          docker exec tp-db-postgres pg_isready -U devops_user -d devops_db
+          echo "--- Variables appliquées au conteneur DB (valeurs de TP) ---"
+          docker inspect tp-db-postgres --format '{{range .Config.Env}}{{println .}}{{end}}' | grep '^POSTGRES_'
+          terraform output

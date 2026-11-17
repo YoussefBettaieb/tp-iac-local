@@ -1,0 +1,36 @@
+$ docker ps --filter name=tp-
+NAMES                     IMAGE                  STATUS          PORTS
+tp-app-web                d814a2f709bd           Up 9 seconds    0.0.0.0:8080->80/tcp
+tp-db-postgres            2ea8630df176           Up 10 seconds   0.0.0.0:5432->5432/tcp
+devops-tp-worker2         kindest/node:v1.37.0   Up 15 minutes   
+devops-tp-control-plane   kindest/node:v1.37.0   Up 15 minutes   127.0.0.1:40323->6443/tcp
+devops-tp-worker          kindest/node:v1.37.0   Up 15 minutes   
+
+$ curl -s http://localhost:8080/
+<h1>Application Deployed via Terraform IaC!</h1>
+
+
+$ curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/
+200
+
+$ docker exec tp-db-postgres pg_isready -U devops_user -d devops_db
+/var/run/postgresql:5432 - accepting connections
+
+$ docker exec tp-db-postgres psql -U devops_user -d devops_db -c 'SELECT current_database(), current_user, version();'
+ current_database | current_user |                                                      version                                                       
+------------------+--------------+--------------------------------------------------------------------------------------------------------------------
+ devops_db        | devops_user  | PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+
+$ terraform output
+app_access_url = "http://localhost:8080"
+app_container_name = "tp-app-web"
+db_connection = "localhost:5432"
+db_container_name = "tp-db-postgres"
+
+$ terraform state list
+docker_container.app_container
+docker_container.db_container
+docker_image.app_image
+docker_image.postgres_image
